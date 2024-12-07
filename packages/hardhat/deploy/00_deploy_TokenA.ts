@@ -19,7 +19,7 @@ const deployTokenA: DeployFunction = async function (hre: HardhatRuntimeEnvironm
   });
 
   // Get the deployed contract to interact with it after deploying.
-  const Marketplace = await hre.ethers.getContract<Contract>("TokenA", deployer);
+  const TokenA = await hre.ethers.getContract<Contract>("TokenA", deployer);
   //console.log("👋 Initial greeting:", await yourContract.greeting());
 };
 
