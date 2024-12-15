@@ -18,7 +18,7 @@ const deploySimpleDEX: DeployFunction = async function (hre: HardhatRuntimeEnvir
 
   // Get the deployed contract to interact with it after deploying.
   const SimpleDEX = await hre.ethers.getContract<Contract>("SimpleDEX", deployer);
-  //console.log("👋 Initial greeting:", await yourContract.greeting());
+ 
 };
 
 export default deploySimpleDEX;
