@@ -37,7 +37,7 @@ contract SimpleDEX is Ownable {
     constructor(address _tokenA, address _tokenB) Ownable(msg.sender) {
         tokenA = IERC20(_tokenA);
         tokenB = IERC20(_tokenB);
-        
+
     }
 
     /// @notice Adds liquidity to the pool

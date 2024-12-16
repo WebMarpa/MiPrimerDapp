@@ -110,86 +110,123 @@ const Curve: React.FC<Props> = ({
       ctx.stroke();
       ctx.lineWidth = 1;
 
-      // Puntos destacados
-      ctx.fillStyle = "#0000FF";
-      ctx.beginPath();
-      ctx.arc(plotX(reserveANum), plotY(reserveBNum), 5, 0, 2 * Math.PI);
-      ctx.fill();
+// Puntos destacados
+ctx.fillStyle = "#0000FF";
+ctx.beginPath();
+ctx.arc(plotX(reserveANum), plotY(reserveBNum), 5, 0, 2 * Math.PI);
+ctx.fill();
 
-      // Indicadores de intercambio (Swap)
-      if (amountToSwapA > 0) {
-        const newReserveA = reserveANum + amountToSwapA;
-        const newReserveB = k / newReserveA;
+// Indicadores de intercambio (Swap)
+if (amountToSwapA > 0) {
+  const newReserveA = reserveANum + amountToSwapA;
+  const newReserveB = k / newReserveA;
 
-        ctx.fillStyle = "#bbbbbb";
-        ctx.beginPath();
-        ctx.arc(plotX(newReserveA), plotY(newReserveB), 5, 0, 2 * Math.PI);
-        ctx.fill();
+  ctx.fillStyle = "#bbbbbb";
+  ctx.beginPath();
+  ctx.arc(plotX(newReserveA), plotY(newReserveB), 5, 0, 2 * Math.PI);
+  ctx.fill();
 
-        // Flechas de intercambio
-        ctx.strokeStyle = "#009900";
-        drawArrow(
-          ctx,
-          plotX(reserveANum),
-          plotY(reserveBNum),
-          plotX(reserveANum),
-          plotY(newReserveB)
-        );
-        drawArrow(
-          ctx,
-          plotX(reserveANum),
-          plotY(newReserveB),
-          plotX(newReserveA),
-          plotY(newReserveB)
-        );
+  // Flechas de intercambio
+  ctx.strokeStyle = "#009900";
+  drawArrow(
+    ctx,
+    plotX(reserveANum),
+    plotY(reserveBNum),
+    plotX(reserveANum),
+    plotY(newReserveB)
+  );
+  drawArrow(
+    ctx,
+    plotX(reserveANum),
+    plotY(newReserveB),
+    plotX(newReserveA),
+    plotY(newReserveB)
+  );
 
-        const amountGained =
-          Math.round((10000 * (amountToSwapA * reserveBNum)) / newReserveA) /
-          10000;
-        ctx.fillStyle = "#000000";
-        ctx.fillText(
-          `${amountGained} TokenB output`,
-          plotX(newReserveA) + textSize,
-          plotY(newReserveB)
-        );
-      }
+  // Calcula la cantidad de TokenB (ajustado para la conversión correcta)
+  const amountGainedInTokenB = (amountToSwapA * reserveBNum) / newReserveA;
 
-      if (amountToSwapB > 0) {
-        const newReserveB = reserveBNum + amountToSwapB;
-        const newReserveA = k / newReserveB;
+  // Convertir a la unidad de token (por ejemplo, si estamos trabajando con 18 decimales)
+  const amountInTokenB = amountGainedInTokenB / 1e18; // Convertimos de wei a unidades más grandes (por ejemplo, Ether o TokenB)
 
-        ctx.fillStyle = "#bbbbbb";
-        ctx.beginPath();
-        ctx.arc(plotX(newReserveA), plotY(newReserveB), 5, 0, 2 * Math.PI);
-        ctx.fill();
+  const roundedAmountInTokenB = Math.floor(amountInTokenB * 100) / 100; // Redondeamos para mantener solo dos decimales
 
-        // Flechas de intercambio
-        ctx.strokeStyle = "#009900";
-        drawArrow(
-          ctx,
-          plotX(reserveANum),
-          plotY(reserveBNum),
-          plotX(newReserveA),
-          plotY(reserveBNum)
-        );
-        drawArrow(
-          ctx,
-          plotX(newReserveA),
-          plotY(reserveBNum),
-          plotX(newReserveA),
-          plotY(newReserveB)
-        );
+  // Dibujar el resultado de TokenB en el gráfico
+  ctx.fillStyle = "#dc3545"; // Rojo para output
+  ctx.fillText(
+    `${roundedAmountInTokenB.toFixed(2)} TokenB output`, // Muestra con decimales reducidos
+    plotX(newReserveA) + textSize,
+    plotY(k / newReserveA),
+  );
 
-        const amountGained =
-          Math.round((10000 * (amountToSwapB * reserveANum)) / newReserveB) /
-          10000;
-        ctx.fillStyle = "#000000";
-        ctx.fillText(
-          `${amountGained} TokenA output`,
-          plotX(newReserveA) + textSize,
-          plotY(newReserveB) - textSize
-        );
-      }
+  // Convertir el input de TokenA de wei a unidades legibles
+  const amountInTokenA = amountToSwapA / 1e18; // Convertir de wei a tokens
+  const roundedAmountInTokenA = Math.floor(amountInTokenA * 100) / 100; // Redondeamos a dos decimales
+
+  // Aquí puedes agregar el valor de TokenA (input)
+  ctx.fillStyle = "#28a745"; // Verde para input
+  ctx.fillText(
+    `${roundedAmountInTokenA.toFixed(2)} TokenA input`, // Muestra el valor del input de TokenA
+    plotX(reserveANum) + textSize,
+    plotY(reserveBNum) - textSize, // Ajusta la posición para que esté en un renglón diferente al output
+  );
+}
+
+if (amountToSwapB > 0) {
+  const newReserveB = reserveBNum + amountToSwapB;
+  const newReserveA = k / newReserveB;
+
+  ctx.fillStyle = "#bbbbbb";
+  ctx.beginPath();
+  ctx.arc(plotX(newReserveA), plotY(newReserveB), 5, 0, 2 * Math.PI);
+  ctx.fill();
+
+  // Flechas de intercambio
+  ctx.strokeStyle = "#009900";
+  drawArrow(
+    ctx,
+    plotX(reserveANum),
+    plotY(reserveBNum),
+    plotX(newReserveA),
+    plotY(reserveBNum)
+  );
+  drawArrow(
+    ctx,
+    plotX(newReserveA),
+    plotY(reserveBNum),
+    plotX(newReserveA),
+    plotY(newReserveB)
+  );
+
+  const amountGained = Math.round((10000 * (amountToSwapB * reserveANum)) / newReserveB) / 10000;
+
+  // Convierte el valor de wei a tokens (o ether, según el caso)
+  const amountGainedInTokens = amountGained / 1e18; // 1e18 es la conversión de wei a ether, usa la misma escala para tus tokens
+
+  // Redondea el valor para mantener solo dos decimales
+  const roundedAmountInTokens = Math.floor(amountGainedInTokens * 100) / 100;
+
+  // Ahora dibuja el resultado de TokenA en el gráfico
+  ctx.fillStyle = "#dc3545"; // Rojo para output
+  ctx.fillText(
+    `${roundedAmountInTokens.toFixed(2)} TokenA output`, // Muestra con decimales reducidos
+    plotX(k / newReserveB) + textSize,
+    plotY(newReserveB) - textSize, // Ajuste de posición
+  );
+
+  // Convertir el input de TokenB de wei a unidades legibles
+  const amountInTokenB = amountToSwapB / 1e18; // Convertir de wei a tokens
+  const roundedAmountInTokenB = Math.floor(amountInTokenB * 100) / 100; // Redondeamos a dos decimales
+
+  // Aquí puedes agregar el valor de TokenB (input)
+  ctx.fillStyle = "#28a745"; // Verde para input
+  ctx.fillText(
+    `${roundedAmountInTokenB.toFixed(2)} TokenB input`, // Muestra el valor del input de TokenB
+    plotX(reserveBNum) + textSize,
+    plotY(reserveANum) - 2 * textSize, // Ajuste de posición
+  );
+}
+
     }
   }, [reserveA, reserveB, amountToSwapA, amountToSwapB]);
 

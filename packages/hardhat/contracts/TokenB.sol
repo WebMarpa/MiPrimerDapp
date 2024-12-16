@@ -13,7 +13,7 @@ contract TokenB is ERC20, Ownable {
         _mint(msg.sender, 1000 * 10 ** decimals());
     }
 
-    function mint(address to, uint256 amount) public{
+    function mint(address to, uint256 amount) public onlyOwner{
         _mint(to, amount);
     }
 }
